@@ -1,7 +1,7 @@
 {
   "name": "markdown-reader",
   "displayName": "Markdown Reader",
-  "publisher": "ayhammouda",
+  "publisher": "bluecloud.dev",
   "version": "0.0.0",
   "description": "Open markdown files in preview mode by default.",
   "engines": {
