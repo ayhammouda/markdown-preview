@@ -1,7 +1,7 @@
 {
   "name": "markdown-reader",
   "displayName": "Markdown Reader",
-  "publisher": "bluecloud.dev",
+  "publisher": "blueclouddev",
   "version": "0.0.0",
   "description": "Open markdown files in preview mode by default.",
   "engines": {
@@ -13,7 +13,7 @@
   "icon": "assets/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ayhammouda/markdown-preview-default.git"
+    "url": "https://github.com/ayhammouda/markdown-preview.git"
   },
   "activationEvents": [
     "onLanguage:markdown"

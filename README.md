@@ -5,14 +5,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ayhammouda/markdown-preview-default/actions/workflows/ci.yml">
-    <img src="https://github.com/ayhammouda/markdown-preview-default/actions/workflows/ci.yml/badge.svg" alt="CI status">
+  <a href="https://github.com/ayhammouda/markdown-preview/actions/workflows/ci.yml">
+    <img src="https://github.com/ayhammouda/markdown-preview/actions/workflows/ci.yml/badge.svg" alt="CI status">
   </a>
-  <a href="https://github.com/ayhammouda/markdown-preview-default/releases">
-    <img src="https://img.shields.io/github/v/release/ayhammouda/markdown-preview-default?include_prereleases&label=release" alt="Latest release">
+  <a href="https://github.com/ayhammouda/markdown-preview/releases">
+    <img src="https://img.shields.io/github/v/release/ayhammouda/markdown-preview?include_prereleases&label=release" alt="Latest release">
   </a>
   <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/ayhammouda/markdown-preview-default" alt="License">
+    <img src="https://img.shields.io/github/license/ayhammouda/markdown-preview" alt="License">
   </a>
 </p>
 
@@ -78,8 +78,8 @@ Troubleshooting steps will be documented once user-facing features ship.
 ## :handshake: Contributing
 
 ```sh
-git clone https://github.com/ayhammouda/markdown-preview-default.git
-cd markdown-preview-default
+git clone https://github.com/ayhammouda/markdown-preview.git
+cd markdown-preview
 npm ci
 npm test
 npm run lint
@@ -98,7 +98,7 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 ---
 
 <p align="center">
-  <a href="https://github.com/ayhammouda/markdown-preview-default/issues">Report a Bug</a>
+  <a href="https://github.com/ayhammouda/markdown-preview/issues">Report a Bug</a>
   ·
-  <a href="https://github.com/ayhammouda/markdown-preview-default/issues">Request a Feature</a>
+  <a href="https://github.com/ayhammouda/markdown-preview/issues">Request a Feature</a>
 </p>
