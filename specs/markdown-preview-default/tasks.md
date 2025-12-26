@@ -82,20 +82,20 @@ US3 (Formatting Toolbar) [P1] (v0.2.0)
 
 **CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T012 [P] Create `ViewMode` enum and `FileState` interface in `src/types/state.ts`
-- [ ] T013 [P] Create `ExtensionConfiguration` interface in `src/types/config.ts`
-- [ ] T014 [P] Create `FormattingAction`, `FormattingType`, `FormattingConfig` types in `src/types/formatting.ts`
-- [ ] T021 [P] Create `tests/unit/state-service.test.ts` with tests for state management
-- [ ] T022 [P] Create `tests/unit/config-service.test.ts` with tests for configuration access
-- [ ] T015 Create `StateService` skeleton in `src/services/state-service.ts` (Map<string, FileState>); keep behavior minimal until unit tests exist (T021)
-- [ ] T016 Create `ConfigService` skeleton in `src/services/config-service.ts` (getEnabled, getExcludePatterns, getMaxFileSize, isExcluded); keep behavior minimal until unit tests exist (T022)
-- [ ] T017 Create extension entry point skeleton in `src/extension.ts` with activate/deactivate and disposable array
-- [ ] T018 [P] Create test fixtures: `tests/fixtures/sample.md`, `tests/fixtures/large-file.md` (>1MB), `tests/fixtures/with-formatting.md`
-- [ ] T019 [P] Create `tests/fixtures/git-conflict.md` with conflict markers for edge case testing
-- [ ] T020 Wire up Mocha + @vscode/test-electron harness (bootstrap, TS transpile strategy, and runner entrypoints) to support scripts created in T003
-- [ ] T139 [P] Set up l10n infrastructure: create `package.nls.json` with default English strings, add `l10n` directory structure for future translations, and export `t()` helper from `src/utils/l10n.ts` wrapping `vscode.l10n.t()` for consistent usage across the codebase (prerequisite for T031, T038, T115, T122, T132, T134, T135)
-- [ ] T125 Implement StateService behavior to satisfy `tests/unit/state-service.test.ts` (T021) (FR-042)
-- [ ] T126 Implement ConfigService behavior to satisfy `tests/unit/config-service.test.ts` (T022) (FR-035-FR-038, FR-041)
+- [x] T012 [P] Create `ViewMode` enum and `FileState` interface in `src/types/state.ts`
+- [x] T013 [P] Create `ExtensionConfiguration` interface in `src/types/config.ts`
+- [x] T014 [P] Create `FormattingAction`, `FormattingType`, `FormattingConfig` types in `src/types/formatting.ts`
+- [x] T021 [P] Create `tests/unit/state-service.test.ts` with tests for state management
+- [x] T022 [P] Create `tests/unit/config-service.test.ts` with tests for configuration access
+- [x] T015 Create `StateService` skeleton in `src/services/state-service.ts` (Map<string, FileState>); keep behavior minimal until unit tests exist (T021)
+- [x] T016 Create `ConfigService` skeleton in `src/services/config-service.ts` (getEnabled, getExcludePatterns, getMaxFileSize, isExcluded); keep behavior minimal until unit tests exist (T022)
+- [x] T017 Create extension entry point skeleton in `src/extension.ts` with activate/deactivate and disposable array
+- [x] T018 [P] Create test fixtures: `tests/fixtures/sample.md`, `tests/fixtures/large-file.md` (>1MB), `tests/fixtures/with-formatting.md`
+- [x] T019 [P] Create `tests/fixtures/git-conflict.md` with conflict markers for edge case testing
+- [x] T020 Wire up Mocha + @vscode/test-electron harness (bootstrap, TS transpile strategy, and runner entrypoints) to support scripts created in T003
+- [x] T139 [P] Set up l10n infrastructure: create `package.nls.json` with default English strings, add `l10n` directory structure for future translations, and export `t()` helper from `src/utils/l10n.ts` wrapping `vscode.l10n.t()` for consistent usage across the codebase (prerequisite for T031, T038, T115, T122, T132, T134, T135)
+- [x] T125 Implement StateService behavior to satisfy `tests/unit/state-service.test.ts` (T021) (FR-042)
+- [x] T126 Implement ConfigService behavior to satisfy `tests/unit/config-service.test.ts` (T022) (FR-035-FR-038, FR-041)
 
 ---
 
@@ -106,26 +106,26 @@ US3 (Formatting Toolbar) [P1] (v0.2.0)
 
 ### Tests (Write First - Must Fail Before Implementation)
 
-- [ ] T023 [P] [US1] Create `tests/integration/preview-mode.test.ts` with test: "opens markdown file in preview mode by default" and shows a one-time welcome/tutorial message on first open
-- [ ] T024 [P] [US1] Add test: "respects VS Code's native markdown preview rendering"
-- [ ] T025 [P] [US1] Add test: "file opened via Quick Open (Ctrl+P) opens in preview mode"
-- [ ] T026 [P] [US1] Add test: "preview mode shows no additional UI elements"
-- [ ] T127 [P] [US1] Add test: "large files (>1MB) skip auto-preview and show notification actions; per-file opt-out persists via workspaceState" (FR-041)
-- [ ] T027 [P] [US1] Create `tests/unit/validation-service.test.ts` with tests for file validation logic
+- [x] T023 [P] [US1] Create `tests/integration/preview-mode.test.ts` with test: "opens markdown file in preview mode by default" and shows a one-time welcome/tutorial message on first open
+- [x] T024 [P] [US1] Add test: "respects VS Code's native markdown preview rendering"
+- [x] T025 [P] [US1] Add test: "file opened via Quick Open (Ctrl+P) opens in preview mode"
+- [x] T026 [P] [US1] Add test: "preview mode shows no additional UI elements"
+- [x] T127 [P] [US1] Add test: "large files (>1MB) skip auto-preview and show notification actions; per-file opt-out persists via workspaceState" (FR-041)
+- [x] T027 [P] [US1] Create `tests/unit/validation-service.test.ts` with tests for file validation logic
 
 ### Implementation
 
-- [ ] T028 [US1] Create `src/services/validation-service.ts` with ValidationService class (isMarkdownFile, isDiffView, isLargeFile, isBinaryFile methods)
-- [ ] T029 [US1] Create `src/services/preview-service.ts` with PreviewService class (showPreview method using `markdown.showPreview` command)
-- [ ] T030 [US1] Implement `shouldShowPreview()` decision logic in PreviewService
-- [ ] T031 [US1] Implement large file handling (>1MB) per FR-041: skip auto-preview, open in text editor, show non-modal info message with [Open Preview Anyway] and [Don't Show Again for This File]; persist per-file choice in `context.workspaceState` and skip future prompts when "Don't Show Again" is selected; localize strings via `vscode.l10n` (FR-041)
-- [ ] T032 [US1] Create `src/handlers/markdown-file-handler.ts` with MarkdownFileHandler class
-- [ ] T033 [US1] Implement `handleDocumentOpen()` in MarkdownFileHandler: check validation, close text editor, show preview
-- [ ] T034 [US1] Register `onDidOpenTextDocument` event listener in `src/extension.ts` and show a one-time, non-blocking welcome message with optional US1 tutorial link (store dismissal in `context.globalState`)
-- [ ] T035 [US1] Implement exclude pattern matching using minimatch in ConfigService
-- [ ] T036 [US1] Handle edge cases: untitled files → edit mode, diff views → skip interception
-- [ ] T037 [US1] Set context key `markdownReader.isMarkdown` via setContext for markdown files
-- [ ] T038 [US1] Detect binary .md files (check first 8KB for NUL byte or invalid UTF-8 sequences) and fall back to text editor with warning message (localized via `vscode.l10n`): "This file appears to be binary and cannot be previewed"
+- [x] T028 [US1] Create `src/services/validation-service.ts` with ValidationService class (isMarkdownFile, isDiffView, isLargeFile, isBinaryFile methods)
+- [x] T029 [US1] Create `src/services/preview-service.ts` with PreviewService class (showPreview method using `markdown.showPreview` command)
+- [x] T030 [US1] Implement `shouldShowPreview()` decision logic in PreviewService
+- [x] T031 [US1] Implement large file handling (>1MB) per FR-041: skip auto-preview, open in text editor, show non-modal info message with [Open Preview Anyway] and [Don't Show Again for This File]; persist per-file choice in `context.workspaceState` and skip future prompts when "Don't Show Again" is selected; localize strings via `vscode.l10n` (FR-041)
+- [x] T032 [US1] Create `src/handlers/markdown-file-handler.ts` with MarkdownFileHandler class
+- [x] T033 [US1] Implement `handleDocumentOpen()` in MarkdownFileHandler: check validation, close text editor, show preview
+- [x] T034 [US1] Register `onDidOpenTextDocument` event listener in `src/extension.ts` and show a one-time, non-blocking welcome message with optional US1 tutorial link (store dismissal in `context.globalState`)
+- [x] T035 [US1] Implement exclude pattern matching using minimatch in ConfigService
+- [x] T036 [US1] Handle edge cases: untitled files → edit mode, diff views → skip interception
+- [x] T037 [US1] Set context key `markdownReader.isMarkdown` via setContext for markdown files
+- [x] T038 [US1] Detect binary .md files (check first 8KB for NUL byte or invalid UTF-8 sequences) and fall back to text editor with warning message (localized via `vscode.l10n`): "This file appears to be binary and cannot be previewed"
 
 **Manual Test Checklist (US1)**
 - [ ] Click .md file in explorer → opens in preview mode
@@ -144,38 +144,38 @@ US3 (Formatting Toolbar) [P1] (v0.2.0)
 
 ### Tests
 
-- [ ] T039 [P] [US2] Create `tests/integration/edit-mode.test.ts` with test: "Enter Edit Mode command opens split view"
-- [ ] T040 [P] [US2] Add test: "Exit Edit Mode command returns to preview-only"
-- [ ] T041 [P] [US2] Add test: "Toggle Edit Mode command switches between modes"
-- [ ] T042 [P] [US2] Add test: "edit mode shows text editor on left, live preview on right"
-- [ ] T043 [P] [US2] Add test: "preview updates automatically as user types"
-- [ ] T044 [P] [US2] Add test: "saving in edit mode does not return to preview mode"
-- [ ] T128 [P] [US2] Add test: "exiting edit mode with unsaved changes prompts to save (Save & Exit / Exit Without Saving / Cancel)" (FR-045)
-- [ ] T129 [P] [US2] Add test: "pane moves/closes preserve expected state (move preview; close preview; close editor)" (FR-006a, FR-006b, FR-006c)
-- [ ] T130 [P] [US2] Add test: "after mode switch, focus moves as specified; scroll position preserved when feasible" (FR-051)
-- [ ] T140 [P] [US2] Add test: "manual open of text editor stays in edit mode (no auto-preview)" (FR-006f)
+- [x] T039 [P] [US2] Create `tests/integration/edit-mode.test.ts` with test: "Enter Edit Mode command opens split view"
+- [x] T040 [P] [US2] Add test: "Exit Edit Mode command returns to preview-only"
+- [x] T041 [P] [US2] Add test: "Toggle Edit Mode command switches between modes"
+- [x] T042 [P] [US2] Add test: "edit mode shows text editor on left, live preview on right"
+- [x] T043 [P] [US2] Add test: "preview updates automatically as user types"
+- [x] T044 [P] [US2] Add test: "saving in edit mode does not return to preview mode"
+- [x] T128 [P] [US2] Add test: "exiting edit mode with unsaved changes prompts to save (Save & Exit / Exit Without Saving / Cancel)" (FR-045)
+- [x] T129 [P] [US2] Add test: "pane moves/closes preserve expected state (move preview; close preview; close editor)" (FR-006a, FR-006b, FR-006c)
+- [x] T130 [P] [US2] Add test: "after mode switch, focus moves as specified; scroll position preserved when feasible" (FR-051)
+- [x] T140 [P] [US2] Add test: "manual open of text editor stays in edit mode (no auto-preview)" (FR-006f)
 
 ### Implementation
 
-- [ ] T045 [US2] Extend PreviewService with `enterEditMode()` method (open text editor in ViewColumn.One, showPreviewToSide in ViewColumn.Two)
-- [ ] T046 [US2] Add `exitEditMode()` method to PreviewService (close text editor, keep preview)
-- [ ] T131 [US2] Research VS Code editor group APIs for split ratio control (FR-006d) and `workbench.editor.splitInGroupLayout` (FR-006e):
+- [x] T045 [US2] Extend PreviewService with `enterEditMode()` method (open text editor in ViewColumn.One, showPreviewToSide in ViewColumn.Two)
+- [x] T046 [US2] Add `exitEditMode()` method to PreviewService (close text editor, keep preview)
+- [x] T131 [US2] Research VS Code editor group APIs for split ratio control (FR-006d) and `workbench.editor.splitInGroupLayout` (FR-006e):
   - If supported: implement split ratio and layout preference
   - If not supported: document limitation in README.md
-- [ ] T132 [US2] Implement unsaved-changes prompt on exit edit mode per FR-045 (check Auto Save + `document.isDirty`; localize strings via `vscode.l10n`) (FR-045)
-- [ ] T133 [US2] Implement pane tracking/close handling for edit mode per FR-006a/006b/006c (update StateService + context keys based on editor/preview presence) (FR-006a, FR-006b, FR-006c)
-- [ ] T141 [US2] Respect explicit text editor opens for markdown files (detect user intent; skip auto-preview and keep edit mode until user exits) (FR-006f)
-- [ ] T134 [US2] Implement focus handling per FR-051:
+- [x] T132 [US2] Implement unsaved-changes prompt on exit edit mode per FR-045 (check Auto Save + `document.isDirty`; localize strings via `vscode.l10n`) (FR-045)
+- [x] T133 [US2] Implement pane tracking/close handling for edit mode per FR-006a/006b/006c (update StateService + context keys based on editor/preview presence) (FR-006a, FR-006b, FR-006c)
+- [x] T141 [US2] Respect explicit text editor opens for markdown files (detect user intent; skip auto-preview and keep edit mode until user exits) (FR-006f)
+- [x] T134 [US2] Implement focus handling per FR-051:
   - Focus moves to text editor on enter edit mode (line 1, col 1 or last cursor if returning)
   - Focus moves to preview on exit edit mode
   - Scroll sync: attempt `editor.revealRange()` but accept VS Code's native preview scroll behavior if sync not achievable
   - Localize user-facing strings via `vscode.l10n`
-- [ ] T047 [US2] Create `src/commands/mode-commands.ts` with enterEditMode, exitEditMode, toggleEditMode command handlers
-- [ ] T048 [US2] Register mode commands in package.json contributes.commands per contracts/commands.json
-- [ ] T049 [US2] Update context key `markdownReader.editMode` via setContext on mode changes in StateService
-- [ ] T050 [US2] Register mode commands in `src/extension.ts` with proper disposables
-- [ ] T051 [US2] Add "Done" button to editor title bar (edit mode only) in package.json menus per contracts/menus.json
-- [ ] T052 [US2] Create `tests/integration/commands.test.ts` with command registration tests
+- [x] T047 [US2] Create `src/commands/mode-commands.ts` with enterEditMode, exitEditMode, toggleEditMode command handlers
+- [x] T048 [US2] Register mode commands in package.json contributes.commands per contracts/commands.json
+- [x] T049 [US2] Update context key `markdownReader.editMode` via setContext on mode changes in StateService
+- [x] T050 [US2] Register mode commands in `src/extension.ts` with proper disposables
+- [x] T051 [US2] Add "Done" button to editor title bar (edit mode only) in package.json menus per contracts/menus.json
+- [x] T052 [US2] Create `tests/integration/commands.test.ts` with command registration tests
 
 **Manual Test Checklist (US2)**
 - [ ] Preview mode → Command Palette "Markdown Reader: Enter Edit Mode" (or Ctrl+Shift+V) → split view (editor left, preview right)
@@ -189,7 +189,7 @@ US3 (Formatting Toolbar) [P1] (v0.2.0)
 - [ ] Close text editor pane → exits edit mode (preview only)
 - [ ] Each file maintains independent edit/preview state
 
-- [ ] T142 Release closeout (v0.1.0): update README.md Features/Commands to list only released functionality (no milestone/version mentions) and reflect current settings/known limitations; update CHANGELOG.md with release notes
+- [x] T142 Release closeout (v0.1.0): update README.md Features/Commands to list only released functionality (no milestone/version mentions) and reflect current settings/known limitations; update CHANGELOG.md with release notes
 
 ---
 
