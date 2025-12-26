@@ -1,6 +1,10 @@
 # Markdown Reader
 
 <p align="center">
+  <img src="imgs/hero.png" alt="Markdown Reader hero banner" width="840">
+</p>
+
+<p align="center">
   <a href="https://github.com/ayhammouda/markdown-preview-default/actions/workflows/ci.yml">
     <img src="https://github.com/ayhammouda/markdown-preview-default/actions/workflows/ci.yml/badge.svg" alt="CI status">
   </a>

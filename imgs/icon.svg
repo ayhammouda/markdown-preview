@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- Document shape - narrower, centered at x=64 -->
+  <!-- Width: 70px (from x=29 to x=99), center = 64 -->
+  <path d="M29 18 Q29 10 37 10 L79 10 L99 30 L99 74 Q99 82 91 82 L37 82 Q29 82 29 74 Z" 
+        fill="none" 
+        stroke="#42a5f5" 
+        stroke-width="5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- Folded corner with smooth curve -->
+  <path d="M79 10 L79 22 Q79 30 87 30 L99 30" 
+        fill="none" 
+        stroke="#42a5f5" 
+        stroke-width="5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- Magnifying glass - centered in document at x=64 -->
+  <g transform="translate(58, 44)">
+    <!-- Glass circle -->
+    <circle cx="0" cy="0" r="14" fill="none" stroke="#42a5f5" stroke-width="5"/>
+    <!-- Handle - starts from edge of circle -->
+    <line x1="12" y1="12" x2="24" y2="24" stroke="#42a5f5" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Bottom label box - pill shape, centered -->
+  <rect x="10" y="92" width="108" height="26" rx="13" 
+        fill="none" 
+        stroke="#42a5f5" 
+        stroke-width="5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- MD PREVIEW text -->
+  <text x="64" y="111" text-anchor="middle" font-family="Noto Sans Mono, monospace" font-size="13" font-weight="bold" fill="#42a5f5">MD PREVIEW</text>
+</svg>
