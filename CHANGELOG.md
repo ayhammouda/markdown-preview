@@ -19,6 +19,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - Formatting toolbar actions in edit mode for bold, italic, strikethrough, lists, code, links, and headings
 - Formatting commands with selection-aware placeholder handling
+- URL prompt placeholder for link insertion
+
+### Changed
+- Formatting commands now require an active markdown editor
+- Settings resolve per resource/workspace scope
 
 ## [0.1.0] - 2025-12-27
 

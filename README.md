@@ -35,6 +35,7 @@ Preview-by-default, edit mode, and formatting toolbar actions are available for 
 - [Quick Start](#zap-quick-start)
 - [Commands](#keyboard-commands)
 - [Settings](#gear-settings)
+- [Known Limitations](#warning-known-limitations)
 - [How It Works](#bulb-how-it-works)
 - [Privacy](#lock-privacy)
 - [Troubleshooting](#wrench-troubleshooting)
@@ -53,7 +54,7 @@ Preview-by-default, edit mode, and formatting toolbar actions are available for 
 
 ## :clipboard: Requirements
 
-- VS Code **1.85** or later
+- VS Code **1.107** or later
 
 ## :zap: Quick Start
 
@@ -84,6 +85,11 @@ Preview-by-default, edit mode, and formatting toolbar actions are available for 
 - `markdownReader.excludePatterns` (default: `["**/node_modules/**", "**/.git/**"]`) — paths to ignore
 - `markdownReader.maxFileSize` (default: `1048576`) — bytes threshold for large-file handling
 
+## :warning: Known Limitations
+
+- Formatting is available via toolbar and command palette; context menus and per-action keybindings are not available yet.
+- Split ratio and layout are controlled by VS Code; the extension cannot force a 50/50 ratio.
+
 ## :bulb: How It Works
 
 - Uses VS Code's native markdown preview for rendering and live updates.
@@ -97,7 +103,6 @@ Preview-by-default, edit mode, and formatting toolbar actions are available for 
 ## :wrench: Troubleshooting
 
 - If a file opens in preview and you want to edit, run **Enter Edit Mode** or disable the extension.
-- Split ratio and layout are controlled by VS Code; the extension cannot force a 50/50 ratio.
 
 ## :handshake: Contributing
 
