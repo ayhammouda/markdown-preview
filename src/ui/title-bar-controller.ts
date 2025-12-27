@@ -7,6 +7,11 @@ export class TitleBarController implements vscode.Disposable {
 
   constructor(private readonly stateService: StateService) {}
 
+  /**
+   * Register editor change listeners to keep context keys in sync.
+   * @returns void
+   * @throws No errors expected.
+   */
   register(): void {
     this.disposables.push(
       vscode.window.onDidChangeActiveTextEditor(this.handleEditorChange.bind(this))
@@ -14,6 +19,11 @@ export class TitleBarController implements vscode.Disposable {
     void this.updateContext(vscode.window.activeTextEditor);
   }
 
+  /**
+   * Dispose all registered listeners.
+   * @returns void
+   * @throws No errors expected.
+   */
   dispose(): void {
     for (const disposable of this.disposables) {
       disposable.dispose();

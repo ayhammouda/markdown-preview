@@ -6,9 +6,13 @@ import { ViewMode } from '../../src/types/state';
 
 describe('StateService', () => {
   let clock: sinon.SinonFakeTimers;
+  let statusStub: sinon.SinonStub;
 
   beforeEach(() => {
     clock = sinon.useFakeTimers({ now: 1000 });
+    statusStub = sinon.stub(vscode.window, 'setStatusBarMessage');
+    const l10nStub = sinon.stub(vscode.l10n, 't') as sinon.SinonStub;
+    l10nStub.callsFake((message: string) => message);
   });
 
   afterEach(() => {
@@ -42,6 +46,7 @@ describe('StateService', () => {
     expect(
       contextStub.calledWith('setContext', 'markdownReader.editMode', true)
     ).to.equal(true);
+    expect(statusStub.calledWith('Edit mode enabled')).to.equal(true);
   });
 
   it('clears state and recreates defaults', () => {
@@ -57,5 +62,18 @@ describe('StateService', () => {
     const reset = service.getState(uri);
     expect(reset.mode).to.equal(ViewMode.Preview);
     expect(reset.lastModeChange).to.equal(2000);
+  });
+
+  it('maintains independent state per file', () => {
+    const service = new StateService();
+    const first = vscode.Uri.file('/tmp/first.md');
+    const second = vscode.Uri.file('/tmp/second.md');
+    sinon.stub(vscode.commands, 'executeCommand').resolves();
+
+    service.setMode(first, ViewMode.Edit);
+    service.setMode(second, ViewMode.Preview);
+
+    expect(service.getState(first).mode).to.equal(ViewMode.Edit);
+    expect(service.getState(second).mode).to.equal(ViewMode.Preview);
   });
 });

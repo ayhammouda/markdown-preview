@@ -2,13 +2,22 @@
   "name": "markdown-preview",
   "displayName": "Markdown Preview",
   "publisher": "blueclouddev",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Open markdown files in preview mode by default.",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.107.0"
   },
   "categories": [
     "Other"
+  ],
+  "keywords": [
+    "markdown",
+    "preview",
+    "editor",
+    "documentation",
+    "readme",
+    "notes"
   ],
   "icon": "assets/icon.png",
   "repository": {
@@ -25,91 +34,106 @@
         "command": "markdownReader.enterEditMode",
         "title": "Enter Edit Mode",
         "category": "Markdown Preview",
-        "icon": "$(edit)"
+        "icon": "$(edit)",
+        "enablement": "resourceLangId == markdown"
       },
       {
         "command": "markdownReader.exitEditMode",
-        "title": "Done",
+        "title": "Done (Exit Edit Mode)",
         "category": "Markdown Preview",
-        "icon": "$(check)"
+        "icon": "$(check)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.toggleEditMode",
         "title": "Toggle Edit Mode",
         "category": "Markdown Preview",
-        "icon": "$(split-horizontal)"
+        "icon": "$(split-horizontal)",
+        "enablement": "resourceLangId == markdown"
       },
       {
         "command": "markdownReader.inspectConfiguration",
         "title": "Inspect Configuration",
         "category": "Markdown Preview",
-        "icon": "$(settings-gear)"
+        "icon": "$(settings-gear)",
+        "enablement": "resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatBold",
         "title": "Bold",
         "category": "Markdown Preview",
-        "icon": "$(bold)"
+        "icon": "$(bold)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatItalic",
         "title": "Italic",
         "category": "Markdown Preview",
-        "icon": "$(italic)"
+        "icon": "$(italic)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatStrikethrough",
         "title": "Strikethrough",
         "category": "Markdown Preview",
-        "icon": "$(strikethrough)"
+        "icon": "$(strikethrough)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatBulletList",
         "title": "Bullet List",
         "category": "Markdown Preview",
-        "icon": "$(list-unordered)"
+        "icon": "$(list-unordered)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatNumberedList",
         "title": "Numbered List",
         "category": "Markdown Preview",
-        "icon": "$(list-ordered)"
+        "icon": "$(list-ordered)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatInlineCode",
         "title": "Inline Code",
         "category": "Markdown Preview",
-        "icon": "$(code)"
+        "icon": "$(code)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatCodeBlock",
         "title": "Code Block",
         "category": "Markdown Preview",
-        "icon": "$(symbol-snippet)"
+        "icon": "$(symbol-snippet)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatLink",
         "title": "Link",
         "category": "Markdown Preview",
-        "icon": "$(link)"
+        "icon": "$(link)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatHeading1",
         "title": "Heading 1",
         "category": "Markdown Preview",
-        "icon": "$(symbol-class)"
+        "icon": "$(symbol-class)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatHeading2",
         "title": "Heading 2",
         "category": "Markdown Preview",
-        "icon": "$(symbol-method)"
+        "icon": "$(symbol-method)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       },
       {
         "command": "markdownReader.formatHeading3",
         "title": "Heading 3",
         "category": "Markdown Preview",
-        "icon": "$(symbol-field)"
+        "icon": "$(symbol-field)",
+        "enablement": "markdownReader.editMode && resourceLangId == markdown"
       }
     ],
     "submenus": [

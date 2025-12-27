@@ -205,4 +205,16 @@ describe('FormattingService', () => {
     const selected = editor.document.getText(editor.selection);
     expect(selected).to.equal('https://example.com');
   });
+
+  it('formats within the performance budget', async () => {
+    const service = new FormattingService();
+    const selection = new vscode.Selection(new vscode.Position(0, 0), new vscode.Position(0, 5));
+    const { editor } = createEditor('hello world', selection);
+
+    const start = Date.now();
+    await service.wrapSelection(editor, '**', '**', 'bold text');
+    const duration = Date.now() - start;
+
+    expect(duration).to.be.lessThan(100);
+  });
 });

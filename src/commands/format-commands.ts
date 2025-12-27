@@ -12,6 +12,13 @@ const runFormatting = async (
   await action(editor);
 };
 
+/**
+ * Apply bold formatting to the current selection.
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatBold = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService
@@ -20,6 +27,13 @@ export const formatBold = async (
     formattingService.wrapSelection(activeEditor, '**', '**', 'bold text')
   );
 
+/**
+ * Apply italic formatting to the current selection.
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatItalic = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService
@@ -28,6 +42,13 @@ export const formatItalic = async (
     formattingService.wrapSelection(activeEditor, '_', '_', 'italic text')
   );
 
+/**
+ * Apply strikethrough formatting to the current selection.
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatStrikethrough = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService
@@ -36,6 +57,13 @@ export const formatStrikethrough = async (
     formattingService.wrapSelection(activeEditor, '~~', '~~', 'strikethrough')
   );
 
+/**
+ * Apply inline code formatting to the current selection.
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatInlineCode = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService
@@ -44,6 +72,13 @@ export const formatInlineCode = async (
     formattingService.wrapSelection(activeEditor, '`', '`', 'code')
   );
 
+/**
+ * Apply code block formatting to the current selection.
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatCodeBlock = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService
@@ -52,6 +87,13 @@ export const formatCodeBlock = async (
     formattingService.wrapBlock(activeEditor, '```', 'code')
   );
 
+/**
+ * Toggle bullet list formatting on the current line(s).
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatBulletList = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService
@@ -60,6 +102,13 @@ export const formatBulletList = async (
     formattingService.toggleLinePrefix(activeEditor, '- ')
   );
 
+/**
+ * Toggle numbered list formatting on the current line(s).
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatNumberedList = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService
@@ -68,6 +117,13 @@ export const formatNumberedList = async (
     formattingService.toggleLinePrefix(activeEditor, '1. ')
   );
 
+/**
+ * Insert a markdown link.
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatLink = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService
@@ -76,6 +132,13 @@ export const formatLink = async (
     formattingService.insertLink(activeEditor)
   );
 
+/**
+ * Toggle H1 heading formatting on the current line(s).
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatHeading1 = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService
@@ -84,6 +147,13 @@ export const formatHeading1 = async (
     formattingService.toggleLinePrefix(activeEditor, '# ')
   );
 
+/**
+ * Toggle H2 heading formatting on the current line(s).
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatHeading2 = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService
@@ -92,6 +162,13 @@ export const formatHeading2 = async (
     formattingService.toggleLinePrefix(activeEditor, '## ')
   );
 
+/**
+ * Toggle H3 heading formatting on the current line(s).
+ * @param editor Active text editor.
+ * @param formattingService Formatting service.
+ * @returns Promise resolved when formatting completes.
+ * @throws Propagates VS Code edit errors.
+ */
 export const formatHeading3 = async (
   editor: vscode.TextEditor,
   formattingService: FormattingService

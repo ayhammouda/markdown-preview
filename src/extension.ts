@@ -16,6 +16,7 @@ import { MarkdownFileHandler } from './handlers/markdown-file-handler';
 import { enterEditMode, exitEditMode, toggleEditMode } from './commands/mode-commands';
 import { ConfigInspection, ConfigService } from './services/config-service';
 import { FormattingService } from './services/formatting-service';
+import { Logger } from './services/logger';
 import { PreviewService } from './services/preview-service';
 import { StateService } from './services/state-service';
 import { ValidationService } from './services/validation-service';
@@ -42,18 +43,27 @@ const formatInspectValue = <T>(inspect?: ConfigInspection<T>): string => {
     .join(' | ');
 };
 
+/**
+ * Activate the Markdown Preview extension.
+ * @param context Extension activation context.
+ * @returns void
+ * @throws No errors expected.
+ */
 export function activate(context: vscode.ExtensionContext): void {
   const disposables: vscode.Disposable[] = [];
+  // Core services are shared across commands for consistent state management.
   const stateService = new StateService();
   const configService = new ConfigService();
-  const outputChannel = vscode.window.createOutputChannel('Markdown Preview');
+  const outputChannel = vscode.window.createOutputChannel('Markdown Reader');
+  const logger = new Logger(outputChannel);
   const validationService = new ValidationService();
   const formattingService = new FormattingService();
   const previewService = new PreviewService(
     stateService,
     configService,
     validationService,
-    context.workspaceState
+    context.workspaceState,
+    logger
   );
 
   const fileHandler = new MarkdownFileHandler(
@@ -61,10 +71,14 @@ export function activate(context: vscode.ExtensionContext): void {
     stateService,
     configService,
     validationService,
-    context.globalState
+    context.globalState,
+    logger
   );
   const titleBarController = new TitleBarController(stateService);
 
+  logger.info('Markdown Preview activated.');
+
+  // Keep context keys aligned with the active resource for enablement rules.
   const updateEnabledContext = (resource?: vscode.Uri): Thenable<unknown> =>
     vscode.commands.executeCommand(
       'setContext',
@@ -75,7 +89,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const logConfigInspection = (resource?: vscode.Uri): void => {
     const inspection = configService.inspect(resource);
     outputChannel.clear();
-    outputChannel.appendLine('Markdown Preview configuration');
+    outputChannel.appendLine('Markdown Reader configuration');
     outputChannel.appendLine(`Resource: ${resource?.toString() ?? 'global'}`);
     outputChannel.appendLine(
       `enabled: ${formatInspectValue(inspection.enabled)}`
@@ -112,6 +126,9 @@ export function activate(context: vscode.ExtensionContext): void {
         return;
       }
 
+      logger.info(
+        `Configuration changed; reloading settings for ${resource?.toString() ?? 'global'}.`
+      );
       configService.clearCache();
 
       if (affectsGlobal) {
@@ -180,6 +197,11 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(...disposables);
 }
 
+/**
+ * Deactivate the extension.
+ * @returns void
+ * @throws No errors expected.
+ */
 export function deactivate(): void {
   // No-op.
 }

@@ -54,4 +54,17 @@ describe('ValidationService', () => {
     fs.rmdirSync(temporaryDirectory);
     expect(result).to.equal(true);
   });
+
+  it('detects conflict markers in documents', () => {
+    const service = new ValidationService();
+    const document = {
+      lineCount: 1,
+      lineAt: () => ({
+        range: new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 15)),
+      }),
+      getText: () => '<<<<<<< HEAD\nconflict\n=======\nother\n>>>>>>> branch',
+    } as unknown as vscode.TextDocument;
+
+    expect(service.hasConflictMarkers(document)).to.equal(true);
+  });
 });
