@@ -2,6 +2,13 @@ import * as vscode from 'vscode';
 import { minimatch } from 'minimatch';
 import { ExtensionConfiguration } from '../types/config';
 
+export type ConfigInspection<T> = {
+  defaultValue?: T;
+  globalValue?: T;
+  workspaceValue?: T;
+  workspaceFolderValue?: T;
+};
+
 const DEFAULT_CONFIG: ExtensionConfiguration = {
   enabled: true,
   excludePatterns: ['**/node_modules/**', '**/.git/**'],
@@ -46,9 +53,9 @@ export class ConfigService {
   }
 
   inspect(resource?: vscode.Uri): {
-    enabled?: vscode.ConfigurationInspect<boolean>;
-    excludePatterns?: vscode.ConfigurationInspect<string[]>;
-    maxFileSize?: vscode.ConfigurationInspect<number>;
+    enabled?: ConfigInspection<boolean>;
+    excludePatterns?: ConfigInspection<string[]>;
+    maxFileSize?: ConfigInspection<number>;
   } {
     const config = vscode.workspace.getConfiguration('markdownReader', resource);
     return {

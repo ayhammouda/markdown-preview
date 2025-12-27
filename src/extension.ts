@@ -14,12 +14,33 @@ import {
 } from './commands/format-commands';
 import { MarkdownFileHandler } from './handlers/markdown-file-handler';
 import { enterEditMode, exitEditMode, toggleEditMode } from './commands/mode-commands';
-import { ConfigService } from './services/config-service';
+import { ConfigInspection, ConfigService } from './services/config-service';
 import { FormattingService } from './services/formatting-service';
 import { PreviewService } from './services/preview-service';
 import { StateService } from './services/state-service';
 import { ValidationService } from './services/validation-service';
 import { TitleBarController } from './ui/title-bar-controller';
+
+const formatInspectValue = <T>(inspect?: ConfigInspection<T>): string => {
+  if (!inspect) {
+    return 'unavailable';
+  }
+
+  const parts = [
+    ['default', inspect.defaultValue],
+    ['user', inspect.globalValue],
+    ['workspace', inspect.workspaceValue],
+    ['folder', inspect.workspaceFolderValue],
+  ].filter(([, value]) => value !== undefined);
+
+  if (parts.length === 0) {
+    return 'unset';
+  }
+
+  return parts
+    .map(([label, value]) => `${label}=${JSON.stringify(value)}`)
+    .join(' | ');
+};
 
 export function activate(context: vscode.ExtensionContext): void {
   const disposables: vscode.Disposable[] = [];
@@ -50,29 +71,6 @@ export function activate(context: vscode.ExtensionContext): void {
       'markdownReader.enabled',
       configService.getEnabled(resource)
     );
-
-  const formatInspectValue = <T>(
-    inspect?: vscode.ConfigurationInspect<T>
-  ): string => {
-    if (!inspect) {
-      return 'unavailable';
-    }
-
-    const parts = [
-      ['default', inspect.defaultValue],
-      ['user', inspect.globalValue],
-      ['workspace', inspect.workspaceValue],
-      ['folder', inspect.workspaceFolderValue],
-    ].filter(([, value]) => value !== undefined);
-
-    if (parts.length === 0) {
-      return 'unset';
-    }
-
-    return parts
-      .map(([label, value]) => `${label}=${JSON.stringify(value)}`)
-      .join(' | ');
-  };
 
   const logConfigInspection = (resource?: vscode.Uri): void => {
     const inspection = configService.inspect(resource);
