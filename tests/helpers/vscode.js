@@ -69,6 +69,8 @@ const workspace = {
   }),
   asRelativePath: (uri) => uri.fsPath,
   workspaceFolders: [],
+  workspaceFile: undefined,
+  textDocuments: [],
   onDidOpenTextDocument: () => ({ dispose: () => {} }),
   onDidCloseTextDocument: () => ({ dispose: () => {} }),
   onDidDeleteFiles: () => ({ dispose: () => {} }),
@@ -150,12 +152,19 @@ const ViewColumn = {
   Three: 3,
 };
 
+const ConfigurationTarget = {
+  Global: 1,
+  Workspace: 2,
+  WorkspaceFolder: 3,
+};
+
 module.exports = {
   Uri,
   Position,
   Range,
   Selection,
   ViewColumn,
+  ConfigurationTarget,
   window,
   workspace,
   commands,

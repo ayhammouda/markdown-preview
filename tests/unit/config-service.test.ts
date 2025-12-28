@@ -104,4 +104,31 @@ describe('ConfigService', () => {
 
     expect(service.isExcluded(uri)).to.equal(true);
   });
+
+  it('clears cache and reloads configuration values', () => {
+    const getConfigurationStub = sinon.stub(vscode.workspace, 'getConfiguration');
+    getConfigurationStub.onCall(0).returns(createConfiguration({ enabled: true }));
+    getConfigurationStub.onCall(1).returns(createConfiguration({ enabled: false }));
+
+    const service = new ConfigService();
+    expect(service.getConfig().enabled).to.equal(true);
+
+    service.clearCache();
+    expect(service.getConfig().enabled).to.equal(false);
+  });
+
+  it('matches exclude patterns case-insensitively and with dotfiles', () => {
+    sinon
+      .stub(vscode.workspace, 'getConfiguration')
+      .returns(createConfiguration({ excludePatterns: ['**/DOCS/**', '**/.git/**'] }));
+    sinon
+      .stub(vscode.workspace, 'asRelativePath')
+      .callsFake((pathOrUri: string | vscode.Uri) =>
+        typeof pathOrUri === 'string' ? pathOrUri : pathOrUri.fsPath
+      );
+
+    const service = new ConfigService();
+    expect(service.isExcluded(vscode.Uri.file('/workspace/docs/README.md'))).to.equal(true);
+    expect(service.isExcluded(vscode.Uri.file('/workspace/.git/config'))).to.equal(true);
+  });
 });

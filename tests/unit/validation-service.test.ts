@@ -120,4 +120,17 @@ describe('ValidationService', () => {
     const result = await service.isBinaryFile(vscode.Uri.file('/tmp/invalid.md'));
     expect(result).to.equal(false);
   });
+
+  it('returns false when binary detection times out', async () => {
+    const service = new ValidationService();
+    const clock = sinon.useFakeTimers();
+    sinon.stub(vscode.workspace.fs, 'readFile').returns(new Promise<Uint8Array>(() => {}));
+
+    const resultPromise = service.isBinaryFile(vscode.Uri.file('/tmp/slow.md'));
+    await clock.tickAsync(2000);
+    const result = await resultPromise;
+
+    clock.restore();
+    expect(result).to.equal(false);
+  });
 });

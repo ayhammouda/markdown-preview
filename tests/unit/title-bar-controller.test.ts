@@ -114,4 +114,33 @@ describe('TitleBarController', () => {
     expect(executeStub.calledWith('setContext', 'markdownReader.isMarkdown', true)).to.equal(true);
     expect(executeStub.calledWith('setContext', 'markdownReader.editMode', true)).to.equal(true);
   });
+
+  it('updates context from active markdown text tabs', async () => {
+    const executeStub = sinon.stub(vscode.commands, 'executeCommand').resolves();
+    const stateServiceStubs = {
+      getExistingState: sinon.stub().returns({ mode: ViewMode.Preview }),
+    };
+    const stateService = stateServiceStubs as unknown as import('../../src/services/state-service').StateService;
+    const controller = new TitleBarController(stateService);
+
+    const uri = vscode.Uri.file('/tmp/text-preview.md');
+    Object.defineProperty(vscode.workspace, 'textDocuments', {
+      value: [{ uri, languageId: 'markdown' }] as vscode.TextDocument[],
+      configurable: true,
+    });
+    Object.defineProperty(vscode.window.tabGroups, 'activeTabGroup', {
+      value: {
+        isActive: true,
+        viewColumn: 1,
+        activeTab: { input: new vscode.TabInputText(uri) },
+        tabs: [],
+      } as unknown as vscode.TabGroup,
+      configurable: true,
+    });
+
+    await (controller as unknown as { updateContext: () => Promise<void> }).updateContext();
+
+    expect(executeStub.calledWith('setContext', 'markdownReader.isMarkdown', true)).to.equal(true);
+    expect(executeStub.calledWith('setContext', 'markdownReader.editMode', false)).to.equal(true);
+  });
 });

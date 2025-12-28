@@ -80,7 +80,7 @@ Markdown Preview keeps markdown content readable by default and gives you a fast
 
 ## Requirements
 
-- VS Code **1.85** or later
+- VS Code **1.85.0 or later**
 
 ## Quick Start
 

@@ -8,7 +8,7 @@
  * - Setting up event listeners for configuration changes
  * - Managing the extension's disposables for proper cleanup
  *
- * The extension activates on `onStartupFinished` to prime editor associations,
+ * The extension activates on `onStartupFinished` to sync editor associations,
  * and on `onLanguage:markdown` to handle preview behavior when markdown is opened.
  *
  * @module extension
@@ -76,12 +76,13 @@ const formatInspectValue = <T>(inspect?: ConfigInspection<T>): string => {
     .join(' | ');
 };
 
-type EditorAssociationEntry = {
+type EditorAssociationEntry = Readonly<{
   filenamePattern: string;
   viewType: string;
-};
+}>;
 
-type EditorAssociations = Record<string, string> | EditorAssociationEntry[];
+type EditorAssociationRecord = Readonly<Record<string, string>>;
+type EditorAssociations = ReadonlyArray<EditorAssociationEntry> | EditorAssociationRecord;
 
 const MARKDOWN_ASSOCIATION_PATTERNS = ['*.md', '*.markdown'];
 const MARKDOWN_ASSOCIATION_VIEW = 'vscode.markdown.preview.editor';
@@ -98,7 +99,7 @@ const addMarkdownAssociation = (
   current: unknown
 ): { updated: boolean; value: EditorAssociations; addedPatterns: string[] } => {
   if (Array.isArray(current)) {
-    const entries = current as EditorAssociationEntry[];
+    const entries = current as ReadonlyArray<EditorAssociationEntry>;
     const addedPatterns: string[] = [];
     const nextEntries = [...entries];
     for (const pattern of MARKDOWN_ASSOCIATION_PATTERNS) {
@@ -121,9 +122,9 @@ const addMarkdownAssociation = (
   }
 
   if (current && typeof current === 'object') {
-    const record = current as Record<string, string>;
+    const record = current as EditorAssociationRecord;
     const addedPatterns: string[] = [];
-    const nextRecord = { ...record };
+    const nextRecord: Record<string, string> = { ...record };
     for (const pattern of MARKDOWN_ASSOCIATION_PATTERNS) {
       if (record[pattern] || record[`**/${pattern}`]) {
         continue;
@@ -155,7 +156,7 @@ const removeMarkdownAssociation = (
   patterns: string[]
 ): { updated: boolean; value: EditorAssociations; removedPatterns: string[] } => {
   if (Array.isArray(current)) {
-    const entries = current as EditorAssociationEntry[];
+    const entries = current as ReadonlyArray<EditorAssociationEntry>;
     const removedPatterns = new Set<string>();
     const nextEntries = entries.filter((entry) => {
       const match = patterns.find((pattern) =>
@@ -178,9 +179,9 @@ const removeMarkdownAssociation = (
   }
 
   if (current && typeof current === 'object') {
-    const record = current as Record<string, string>;
+    const record = current as EditorAssociationRecord;
     const removedPatterns: string[] = [];
-    const nextRecord = { ...record };
+    const nextRecord: Record<string, string> = { ...record };
     for (const pattern of patterns) {
       if (nextRecord[pattern] === MARKDOWN_ASSOCIATION_VIEW) {
         delete nextRecord[pattern];
@@ -461,3 +462,15 @@ export function activate(context: vscode.ExtensionContext): void {
 export function deactivate(): void {
   // No-op.
 }
+
+export const __testing = {
+  formatInspectValue,
+  matchesAssociationPattern,
+  addMarkdownAssociation,
+  removeMarkdownAssociation,
+  isAssociationsEmpty,
+  syncMarkdownAssociations,
+  MARKDOWN_ASSOCIATION_PATTERNS,
+  MARKDOWN_ASSOCIATION_VIEW,
+  MARKDOWN_ASSOCIATION_STATE_KEY,
+};
