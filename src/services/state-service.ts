@@ -1,7 +1,45 @@
+/**
+ * @fileoverview State management service for per-file view mode tracking.
+ *
+ * This service maintains an in-memory map of file states, tracking whether each
+ * markdown file is in preview or edit mode. It also handles:
+ * - Cursor position persistence for edit mode restoration
+ * - Context key updates for UI visibility control
+ * - Accessibility announcements for mode changes
+ *
+ * State is intentionally kept in-memory (not persisted to disk) since preview/edit
+ * mode is considered a transient UI state. Cursor positions are stored per-session
+ * to improve the editing experience when toggling modes.
+ *
+ * @module services/state-service
+ */
+
 import * as vscode from 'vscode';
 import { FileState, ViewMode } from '../types/state';
 import { t } from '../utils/l10n';
 
+/**
+ * Service for managing per-file state including view mode and cursor position.
+ *
+ * Each markdown file maintains independent state, allowing users to have
+ * different files in different modes simultaneously. The service also handles
+ * VS Code context key updates to control toolbar visibility.
+ *
+ * @example
+ * ```typescript
+ * const stateService = new StateService();
+ *
+ * // Get or create state for a file
+ * const state = stateService.getState(uri);
+ * console.log(state.mode); // ViewMode.Preview
+ *
+ * // Update mode (also updates context key and announces change)
+ * stateService.setMode(uri, ViewMode.Edit);
+ *
+ * // Store cursor position for later restoration
+ * stateService.setLastSelection(uri, editor.selection.active);
+ * ```
+ */
 export class StateService {
   private readonly states = new Map<string, FileState>();
 

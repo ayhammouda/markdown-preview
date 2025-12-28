@@ -1,9 +1,32 @@
+/**
+ * @fileoverview Command handlers for view mode switching.
+ *
+ * This module exports command handlers for switching between preview and edit modes:
+ * - enterEditMode: Opens split view with text editor and live preview
+ * - exitEditMode: Returns to preview-only mode
+ * - toggleEditMode: Toggles between the two modes (bound to Ctrl+Shift+V)
+ *
+ * These commands work with both the active editor and any visible markdown editor,
+ * allowing users to switch modes even when focused on the preview pane.
+ *
+ * @module commands/mode-commands
+ */
+
 import * as vscode from 'vscode';
 import { PreviewService } from '../services/preview-service';
 import { StateService } from '../services/state-service';
 import { ViewMode } from '../types/state';
 
-// Prefer the active editor, but fall back to any visible markdown editor.
+/**
+ * Get the active markdown editor, with fallback to any visible markdown editor.
+ *
+ * This fallback is necessary because when the preview pane is focused,
+ * there's no "active text editor" even though the markdown file is visible.
+ * The fallback allows mode commands to work from either the editor or preview pane.
+ *
+ * @returns The markdown text editor, or undefined if none is available
+ * @internal
+ */
 const getActiveMarkdownEditor = (): vscode.TextEditor | undefined =>
   vscode.window.activeTextEditor ??
   vscode.window.visibleTextEditors.find((editor) => editor.document.languageId === 'markdown');

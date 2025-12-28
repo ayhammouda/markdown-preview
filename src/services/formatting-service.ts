@@ -1,6 +1,43 @@
+/**
+ * @fileoverview Text formatting service for markdown editing operations.
+ *
+ * This service provides the core text transformation logic for markdown formatting:
+ * - Inline formatting (bold, italic, strikethrough, code)
+ * - Line prefix toggling (lists, headings)
+ * - Block formatting (code blocks)
+ * - Link insertion with URL prompts
+ *
+ * All operations use VS Code's native TextEditorEdit API for reliable undo/redo
+ * support. The service handles both selected text and empty selections by using
+ * the word under cursor or inserting placeholder text.
+ *
+ * @module services/formatting-service
+ */
+
 import * as vscode from 'vscode';
 import { t } from '../utils/l10n';
 
+/**
+ * Service for applying markdown formatting to text in the editor.
+ *
+ * This service implements the formatting logic required by the toolbar buttons,
+ * context menu, and keyboard shortcuts. It ensures consistent behavior across
+ * all formatting entry points.
+ *
+ * @example
+ * ```typescript
+ * const formattingService = new FormattingService();
+ *
+ * // Wrap selection with bold markers
+ * await formattingService.wrapSelection(editor, '**', '**', 'bold text');
+ *
+ * // Toggle bullet list on current line
+ * await formattingService.toggleLinePrefix(editor, '- ');
+ *
+ * // Insert a link with URL prompt
+ * await formattingService.insertLink(editor);
+ * ```
+ */
 export class FormattingService {
   /**
    * Wrap a selection (or word at cursor) with prefix and suffix markers.

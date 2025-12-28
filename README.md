@@ -127,8 +127,9 @@ Markdown Preview keeps markdown content readable by default and gives you a fast
 ## Accessibility & Keyboard Navigation
 
 - Mode changes are announced through transient status bar messages.
-- Toolbar actions use the VS Code editor title bar, which supports keyboard navigation once focus is in the title bar.
 - Use `Ctrl+Shift+V` / `Cmd+Shift+V` to move between preview and edit modes.
+- Run **Toggle Tab Key Moves Focus** (Command Palette) to enable UI tabbing.
+- Tab/Shift+Tab moves focus across toolbar buttons; Enter/Space activates; Escape returns focus to the editor.
 
 ## :warning: Known Limitations
 

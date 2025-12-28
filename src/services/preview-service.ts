@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Preview service for managing markdown preview/edit modes.
+ *
+ * This service is the core business logic layer for the extension, responsible for:
+ * - Deciding whether to show preview or edit mode for a document
+ * - Managing transitions between preview and edit modes
+ * - Handling large file opt-in/opt-out behavior
+ * - Coordinating with VS Code's native markdown preview commands
+ *
+ * The service uses VS Code's built-in `markdown.showPreview` and
+ * `markdown.showPreviewToSide` commands rather than custom webviews,
+ * following the extension's "native integration" design principle.
+ *
+ * @module services/preview-service
+ */
+
 import * as vscode from 'vscode';
 import { ConfigService } from './config-service';
 import { Logger } from './logger';
@@ -6,8 +22,39 @@ import { ValidationService } from './validation-service';
 import { ViewMode } from '../types/state';
 import { t } from '../utils/l10n';
 
+/**
+ * Storage key for tracking which large files the user has opted out of previewing.
+ * The value is a Record<string, boolean> where keys are file URI strings.
+ */
 const LARGE_FILE_OPT_OUT_KEY = 'markdownReader.largeFileOptOut';
 
+/**
+ * Service for managing markdown preview and edit mode transitions.
+ *
+ * This service coordinates between VS Code's native markdown preview commands
+ * and the extension's state management. It implements the "reading-first"
+ * experience by defaulting to preview mode while providing smooth transitions
+ * to edit mode when needed.
+ *
+ * @example
+ * ```typescript
+ * const previewService = new PreviewService(
+ *   stateService,
+ *   configService,
+ *   validationService,
+ *   context.workspaceState,
+ *   logger
+ * );
+ *
+ * // Check if a document should be previewed
+ * if (await previewService.shouldShowPreview(document)) {
+ *   await previewService.showPreview(document.uri);
+ * }
+ *
+ * // Enter split-view edit mode
+ * await previewService.enterEditMode(document.uri);
+ * ```
+ */
 export class PreviewService {
   constructor(
     private readonly stateService: StateService,

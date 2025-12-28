@@ -280,6 +280,10 @@ User-facing strings should go through the `t()` helper in `src/utils/l10n.ts`.
 This keeps messaging consistent and ready for localization. Avoid hard-coded UI
 strings in services and commands.
 
+Manifest strings (command titles, submenu labels, settings descriptions) are
+localized through `package.nls.json` using `%key%` placeholders in
+`package.json`.
+
 ## Common Tasks
 
 ### Adding a New Command

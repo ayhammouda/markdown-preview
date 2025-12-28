@@ -1,3 +1,20 @@
+/**
+ * @fileoverview File open event handler for markdown documents.
+ *
+ * This handler intercepts VS Code's file open events to implement the
+ * "preview by default" behavior. It coordinates with other services to:
+ * - Validate files before processing
+ * - Decide between preview mode and edit mode
+ * - Handle special cases (untitled, diff, conflicts, large files)
+ * - Show one-time welcome message for new users
+ * - Clean up state when files are closed or deleted
+ *
+ * The handler uses debouncing to prevent duplicate processing when VS Code
+ * fires multiple open events in quick succession (e.g., during session restore).
+ *
+ * @module handlers/markdown-file-handler
+ */
+
 import * as vscode from 'vscode';
 import { ConfigService } from '../services/config-service';
 import { Logger } from '../services/logger';
@@ -7,8 +24,37 @@ import { ValidationService } from '../services/validation-service';
 import { ViewMode } from '../types/state';
 import { t } from '../utils/l10n';
 
+/**
+ * Storage key for tracking whether the welcome message has been shown.
+ * Stored in globalState to persist across workspaces.
+ */
 const WELCOME_KEY = 'markdownReader.welcomeShown';
 
+/**
+ * Handler for intercepting markdown file open events.
+ *
+ * Implements the core "reading-first" experience by redirecting markdown
+ * file opens to VS Code's native preview. Also manages state cleanup
+ * when files are closed or deleted.
+ *
+ * @example
+ * ```typescript
+ * const fileHandler = new MarkdownFileHandler(
+ *   previewService,
+ *   stateService,
+ *   configService,
+ *   validationService,
+ *   context.globalState,
+ *   logger
+ * );
+ *
+ * // Register event listeners
+ * fileHandler.register();
+ *
+ * // Don't forget to dispose when extension deactivates
+ * context.subscriptions.push(fileHandler);
+ * ```
+ */
 export class MarkdownFileHandler implements vscode.Disposable {
   private readonly disposables: vscode.Disposable[] = [];
   private readonly pendingOpens = new Map<string, ReturnType<typeof setTimeout>>();
@@ -66,11 +112,6 @@ export class MarkdownFileHandler implements vscode.Disposable {
   private async processDocumentOpen(document: vscode.TextDocument): Promise<void> {
     const isMarkdown = this.validationService.isMarkdownFile(document);
     const isEnabled = this.configService.getEnabled(document.uri);
-    await vscode.commands.executeCommand(
-      'setContext',
-      'markdownReader.enabled',
-      isEnabled
-    );
 
     if (!isMarkdown) {
       return;

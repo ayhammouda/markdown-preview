@@ -1,6 +1,30 @@
+/**
+ * @fileoverview Command handlers for markdown formatting operations.
+ *
+ * This module exports command handler functions for all formatting operations
+ * supported by the extension. Each handler is a thin wrapper that:
+ * - Validates the active editor is a markdown document
+ * - Delegates to the FormattingService for the actual text transformation
+ *
+ * These handlers are registered with VS Code in extension.ts and can be invoked
+ * via keyboard shortcuts, toolbar buttons, or the Command Palette.
+ *
+ * @module commands/format-commands
+ */
+
 import * as vscode from 'vscode';
 import { FormattingService } from '../services/formatting-service';
+import { t } from '../utils/l10n';
 
+/**
+ * Helper function to validate editor and execute a formatting action.
+ * Ensures the editor exists and contains a markdown document before
+ * running the formatting operation.
+ *
+ * @param editor - The text editor to validate
+ * @param action - The formatting action to execute if validation passes
+ * @internal
+ */
 const runFormatting = async (
   editor: vscode.TextEditor | undefined,
   action: (editor: vscode.TextEditor) => Promise<void>
@@ -24,7 +48,7 @@ export const formatBold = async (
   formattingService: FormattingService
 ): Promise<void> =>
   runFormatting(editor, (activeEditor) =>
-    formattingService.wrapSelection(activeEditor, '**', '**', 'bold text')
+    formattingService.wrapSelection(activeEditor, '**', '**', t('bold text'))
   );
 
 /**
@@ -39,7 +63,7 @@ export const formatItalic = async (
   formattingService: FormattingService
 ): Promise<void> =>
   runFormatting(editor, (activeEditor) =>
-    formattingService.wrapSelection(activeEditor, '_', '_', 'italic text')
+    formattingService.wrapSelection(activeEditor, '_', '_', t('italic text'))
   );
 
 /**
@@ -54,7 +78,7 @@ export const formatStrikethrough = async (
   formattingService: FormattingService
 ): Promise<void> =>
   runFormatting(editor, (activeEditor) =>
-    formattingService.wrapSelection(activeEditor, '~~', '~~', 'strikethrough')
+    formattingService.wrapSelection(activeEditor, '~~', '~~', t('strikethrough'))
   );
 
 /**
@@ -69,7 +93,7 @@ export const formatInlineCode = async (
   formattingService: FormattingService
 ): Promise<void> =>
   runFormatting(editor, (activeEditor) =>
-    formattingService.wrapSelection(activeEditor, '`', '`', 'code')
+    formattingService.wrapSelection(activeEditor, '`', '`', t('code'))
   );
 
 /**
@@ -84,7 +108,7 @@ export const formatCodeBlock = async (
   formattingService: FormattingService
 ): Promise<void> =>
   runFormatting(editor, (activeEditor) =>
-    formattingService.wrapBlock(activeEditor, '```', 'code')
+    formattingService.wrapBlock(activeEditor, '```', t('code'))
   );
 
 /**

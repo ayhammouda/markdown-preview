@@ -18,21 +18,28 @@ This document describes the architecture of the Markdown Preview extension, expl
 
 The extension intercepts markdown file opens and redirects them to VS Code's native markdown preview. It maintains per-file state to track whether each file is in preview mode or edit mode, and provides formatting tools for when users need to edit.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         VS Code Host                            │
-├─────────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐    ┌──────────────┐    ┌─────────────────┐    │
-│  │   Events    │───▶│   Handler    │───▶│    Services     │    │
-│  │ (file open) │    │ (intercept)  │    │ (business logic)│    │
-│  └─────────────┘    └──────────────┘    └─────────────────┘    │
-│         │                  │                     │              │
-│         ▼                  ▼                     ▼              │
-│  ┌─────────────┐    ┌──────────────┐    ┌─────────────────┐    │
-│  │  Commands   │    │     UI       │    │     State       │    │
-│  │ (user input)│    │ (title bar)  │    │ (per-file mode) │    │
-│  └─────────────┘    └──────────────┘    └─────────────────┘    │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph VSCodeHost ["VS Code Host"]
+        direction TB
+
+        subgraph TopRow ["Event Processing"]
+            Events["Events<br/>(file open)"]
+            Handler["Handler<br/>(intercept)"]
+            Services["Services<br/>(business logic)"]
+        end
+
+        subgraph BottomRow ["User Interface & State"]
+            Commands["Commands<br/>(user input)"]
+            UI["UI<br/>(title bar)"]
+            State["State<br/>(per-file mode)"]
+        end
+
+        Events --> Handler --> Services
+        Events --> Commands
+        Handler --> UI
+        Services --> State
+    end
 ```
 
 ## Design Principles
@@ -134,36 +141,25 @@ Services contain the core business logic and are designed to be testable in isol
 
 ### File Open Flow
 
-```
-1. User clicks .md file
-       │
-       ▼
-2. VS Code fires onDidOpenTextDocument
-       │
-       ▼
-3. MarkdownFileHandler receives event
-       │
-       ▼
-4. Check: Is extension enabled? Is file markdown?
-       │
-       ├─ No ──▶ Let VS Code handle normally
-       │
-       ▼ Yes
-5. Check: Is file excluded? Is it too large? Is it binary?
-       │
-       ├─ Yes ──▶ Open in text editor (with optional prompt)
-       │
-       ▼ No
-6. Close the text editor that opened
-       │
-       ▼
-7. Execute markdown.showPreview command
-       │
-       ▼
-8. Update StateService: mode = Preview
-       │
-       ▼
-9. User sees rendered markdown preview
+```mermaid
+flowchart TD
+    A["1. User clicks .md file"] --> B["2. VS Code fires onDidOpenTextDocument"]
+    B --> C["3. MarkdownFileHandler receives event"]
+    C --> D{"4. Extension enabled?<br/>Is file markdown?"}
+
+    D -->|No| E["Let VS Code handle normally"]
+    D -->|Yes| F{"5. Is file excluded?<br/>Too large? Binary?"}
+
+    F -->|Yes| G["Open in text editor<br/>(with optional prompt)"]
+    F -->|No| H["6. Close the text editor that opened"]
+
+    H --> I["7. Execute markdown.showPreview"]
+    I --> J["8. Update StateService: mode = Preview"]
+    J --> K["9. User sees rendered preview"]
+
+    style D fill:#FFB74D
+    style F fill:#FFB74D
+    style K fill:#81C784
 ```
 
 ### Preview Decision Matrix
@@ -179,25 +175,26 @@ Services contain the core business logic and are designed to be testable in isol
 
 ### Mode Toggle Flow
 
-```
-1. User triggers toggleEditMode (Ctrl+Shift+V)
-       │
-       ▼
-2. StateService.getState(uri) - get current mode
-       │
-       ├─ Preview ──▶ PreviewService.enterEditMode()
-       │                    │
-       │                    ├─ Open text editor in ViewColumn.One
-       │                    ├─ Show preview in ViewColumn.Two
-       │                    ├─ Restore last cursor position
-       │                    └─ Update state: mode = Edit
-       │
-       └─ Edit ──▶ PreviewService.exitEditMode()
-                        │
-                        ├─ Check for unsaved changes
-                        ├─ Save cursor position
-                        ├─ Close text editor
-                        └─ Update state: mode = Preview
+```mermaid
+flowchart TD
+    A["1. User triggers toggleEditMode<br/>(Ctrl+Shift+V)"] --> B["2. StateService.getState(uri)"]
+    B --> C{"Current mode?"}
+
+    C -->|Preview| D["PreviewService.enterEditMode()"]
+    D --> D1["Open text editor in ViewColumn.One"]
+    D1 --> D2["Show preview in ViewColumn.Two"]
+    D2 --> D3["Restore last cursor position"]
+    D3 --> D4["Update state: mode = Edit"]
+
+    C -->|Edit| E["PreviewService.exitEditMode()"]
+    E --> E1["Check for unsaved changes"]
+    E1 --> E2["Save cursor position"]
+    E2 --> E3["Close text editor"]
+    E3 --> E4["Update state: mode = Preview"]
+
+    style C fill:#FFB74D
+    style D4 fill:#4A90A4,color:#fff
+    style E4 fill:#81C784
 ```
 
 ## State Management

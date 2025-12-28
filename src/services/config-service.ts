@@ -1,20 +1,71 @@
+/**
+ * @fileoverview Configuration service for reading and caching extension settings.
+ *
+ * This service provides a typed interface to the extension's configuration,
+ * supporting VS Code's hierarchical settings model (default → user → workspace → folder).
+ * It includes:
+ * - Caching for performance (cleared on configuration changes)
+ * - Resource-scoped configuration resolution
+ * - Glob pattern matching for file exclusions using minimatch
+ *
+ * Settings are defined in package.json under `contributes.configuration` with
+ * the `markdownReader` prefix.
+ *
+ * @module services/config-service
+ */
+
 import * as vscode from 'vscode';
 import { minimatch } from 'minimatch';
 import { ExtensionConfiguration } from '../types/config';
 
+/**
+ * Represents the inspection result for a single configuration value.
+ * Contains the value at each scope level where it may be defined.
+ */
 export type ConfigInspection<T> = {
+  /** The default value from package.json */
   defaultValue?: T;
+  /** User settings value (settings.json in user profile) */
   globalValue?: T;
+  /** Workspace settings value (.code-workspace or .vscode/settings.json) */
   workspaceValue?: T;
+  /** Workspace folder settings value (multi-root workspace folder) */
   workspaceFolderValue?: T;
 };
 
+/**
+ * Default configuration values applied when no user settings are defined.
+ * These are the sensible defaults that allow the extension to work
+ * immediately after installation (zero-configuration principle).
+ */
 const DEFAULT_CONFIG: ExtensionConfiguration = {
   enabled: true,
   excludePatterns: ['**/node_modules/**', '**/.git/**'],
-  maxFileSize: 1_048_576,
+  maxFileSize: 1_048_576, // 1MB in bytes
 };
 
+/**
+ * Service for accessing and caching extension configuration.
+ *
+ * Provides typed access to extension settings with support for
+ * resource-scoped configuration in multi-root workspaces.
+ *
+ * @example
+ * ```typescript
+ * const configService = new ConfigService();
+ *
+ * // Get configuration for a specific file
+ * const config = configService.getConfig(document.uri);
+ * if (!config.enabled) return;
+ *
+ * // Check if a file is excluded from auto-preview
+ * if (configService.isExcluded(uri)) return;
+ *
+ * // Inspect settings across all scopes
+ * const inspection = configService.inspect(uri);
+ * console.log(inspection.enabled?.workspaceValue);
+ * ```
+ */
 export class ConfigService {
   private readonly cachedConfigs = new Map<string, ExtensionConfiguration>();
 

@@ -23,10 +23,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Performance validation tests for preview open and mode switching targets
 - Marketplace metadata improvements (keywords, license)
 - Expanded README with installation, accessibility notes, and troubleshooting details
+- Developer docs (architecture, testing, release, troubleshooting, getting started)
+- Manual acceptance checklist for quickstart scenarios and accessibility flows
 
 ### Changed
 - Debounced markdown file open handling to reduce rapid event churn
 - Binary preview warning text aligned with specification wording
+- Localized command titles, submenu labels, and settings descriptions
 
 ## [0.4.0] - 2025-12-27
 
