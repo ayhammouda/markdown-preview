@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { expect } from 'chai';
 import sinon from 'sinon';
 import * as vscode from 'vscode';
 import {
@@ -9,6 +8,13 @@ import {
   formatStrikethrough,
 } from '../../src/commands/format-commands';
 import { FormattingService } from '../../src/services/formatting-service';
+let expect: Chai.ExpectStatic;
+
+before(async () => {
+  ({ expect } = await import('chai'));
+});
+
+
 
 type EditOperation =
   | { type: 'insert'; position: vscode.Position; text: string }
@@ -174,7 +180,7 @@ describe('Formatting toolbar integration', () => {
       const entry = titleMenus.find((item) => item.command === command);
       expect(entry, `missing toolbar command ${command}`).to.not.equal(undefined);
       expect(entry?.when).to.include('markdownReader.editMode');
-      expect(entry?.when).to.include('resourceLangId == markdown');
+      expect(entry?.when).to.include('markdownReader.isMarkdown');
     }
   });
 
@@ -187,7 +193,7 @@ describe('Formatting toolbar integration', () => {
 
     expect(formatEntry, 'missing Format submenu entry').to.not.equal(undefined);
     expect(formatEntry?.when).to.include('markdownReader.editMode');
-    expect(formatEntry?.when).to.include('resourceLangId == markdown');
+    expect(formatEntry?.when).to.include('markdownReader.isMarkdown');
   });
 
   it('includes heading and code submenu items', () => {

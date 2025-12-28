@@ -1,8 +1,14 @@
-import { expect } from 'chai';
 import sinon from 'sinon';
 import * as vscode from 'vscode';
 import { MarkdownFileHandler } from '../../src/handlers/markdown-file-handler';
 import { ViewMode } from '../../src/types/state';
+let expect: Chai.ExpectStatic;
+
+before(async () => {
+  ({ expect } = await import('chai'));
+});
+
+
 
 const createMemento = (): vscode.Memento => {
   const store = new Map<string, unknown>();
@@ -163,6 +169,55 @@ describe('MarkdownFileHandler', () => {
     expect(welcomeStub.calledOnce).to.equal(true);
   });
 
+  it('stores welcome flag when prompt is dismissed', async () => {
+    const previewServiceStubs = {
+      shouldShowPreview: sinon.stub().resolves(true),
+      showPreview: sinon.stub().resolves(),
+    };
+    const previewService =
+      previewServiceStubs as unknown as import('../../src/services/preview-service').PreviewService;
+
+    const stateServiceStubs = {
+      getExistingState: sinon.stub().returns(void 0),
+      setMode: sinon.stub(),
+      setEditorVisible: sinon.stub(),
+      clear: sinon.stub(),
+    };
+    const stateService =
+      stateServiceStubs as unknown as import('../../src/services/state-service').StateService;
+
+    const configService = { getEnabled: () => true } as unknown as import('../../src/services/config-service').ConfigService;
+    const validationService = {
+      isMarkdownFile: () => true,
+      isDiffView: () => false,
+      hasConflictMarkers: () => false,
+    } as unknown as import('../../src/services/validation-service').ValidationService;
+
+    const loggerStubs = { info: sinon.stub(), warn: sinon.stub() };
+    const logger = loggerStubs as unknown as import('../../src/services/logger').Logger;
+
+    const globalState = createMemento();
+    const handler = new MarkdownFileHandler(
+      previewService,
+      stateService,
+      configService,
+      validationService,
+      globalState,
+      logger
+    );
+
+    sinon.stub(vscode.window, 'showInformationMessage').resolves();
+    const openExternalStub = sinon.stub(vscode.env, 'openExternal').resolves();
+    sinon.stub(vscode.commands, 'executeCommand').resolves();
+
+    const document = { uri: vscode.Uri.file('/tmp/welcome-dismiss.md'), isUntitled: false } as vscode.TextDocument;
+    await (handler as unknown as { processDocumentOpen: (d: vscode.TextDocument) => Promise<void> })
+      .processDocumentOpen(document);
+
+    expect(openExternalStub.called).to.equal(false);
+    expect(globalState.get('markdownReader.welcomeShown', false)).to.equal(true);
+  });
+
   it('restores preview when edit tab closes but file remains open', async () => {
     const previewServiceStubs = { showPreview: sinon.stub().resolves() };
     const previewService =
@@ -255,6 +310,117 @@ describe('MarkdownFileHandler', () => {
 
     expect(stateServiceStubs.setEditorVisible.calledWith(uri, false)).to.equal(true);
     expect(previewServiceStubs.showPreview.calledWith(uri)).to.equal(true);
+  });
+
+  it('closes only unpinned clean text tabs when a preview tab exists', async () => {
+    const previewServiceStubs = {
+      shouldShowPreview: sinon.stub().resolves(true),
+      showPreview: sinon.stub().resolves(),
+    };
+    const previewService =
+      previewServiceStubs as unknown as import('../../src/services/preview-service').PreviewService;
+
+    const uri = vscode.Uri.file('/tmp/existing-preview.md');
+    const stateServiceStubs = {
+      getExistingState: sinon.stub().returns(void 0),
+      setMode: sinon.stub(),
+      setEditorVisible: sinon.stub(),
+      clear: sinon.stub(),
+    };
+    const stateService =
+      stateServiceStubs as unknown as import('../../src/services/state-service').StateService;
+
+    const configService = { getEnabled: () => true } as unknown as import('../../src/services/config-service').ConfigService;
+    const validationService = {
+      isMarkdownFile: () => true,
+      isDiffView: () => false,
+      hasConflictMarkers: () => false,
+    } as unknown as import('../../src/services/validation-service').ValidationService;
+
+    const logger = { info: sinon.stub(), warn: sinon.stub() } as unknown as import('../../src/services/logger').Logger;
+
+    const handler = new MarkdownFileHandler(
+      previewService,
+      stateService,
+      configService,
+      validationService,
+      createMemento(),
+      logger
+    );
+
+    const closeStub = sinon.stub(vscode.window.tabGroups, 'close').resolves(true);
+
+    Object.defineProperty(vscode.window.tabGroups, 'all', {
+      value: [
+        {
+          tabs: [
+            { input: new vscode.TabInputText(uri), isPinned: true },
+            { input: new vscode.TabInputText(uri) },
+            { input: new vscode.TabInputCustom(uri, 'vscode.markdown.preview.editor') },
+          ],
+        },
+      ] as unknown as typeof vscode.window.tabGroups.all,
+      configurable: true,
+    });
+
+    const document = { uri, isUntitled: false, isDirty: false } as vscode.TextDocument;
+    await (handler as unknown as { processDocumentOpen: (d: vscode.TextDocument) => Promise<void> })
+      .processDocumentOpen(document);
+
+    expect(closeStub.calledOnce).to.equal(true);
+    const closedTabs = closeStub.firstCall.args[0] as unknown as vscode.Tab[];
+    expect(closedTabs.length).to.equal(1);
+    expect(previewServiceStubs.showPreview.called).to.equal(false);
+  });
+
+  it('does not close tabs for dirty documents when preview is open', async () => {
+    const previewService = {
+      shouldShowPreview: sinon.stub().resolves(true),
+      showPreview: sinon.stub().resolves(),
+    } as unknown as import('../../src/services/preview-service').PreviewService;
+    const stateService = {
+      getExistingState: sinon.stub().returns(void 0),
+      setMode: sinon.stub(),
+      setEditorVisible: sinon.stub(),
+      clear: sinon.stub(),
+    } as unknown as import('../../src/services/state-service').StateService;
+    const configService = { getEnabled: () => true } as unknown as import('../../src/services/config-service').ConfigService;
+    const validationService = {
+      isMarkdownFile: () => true,
+      isDiffView: () => false,
+      hasConflictMarkers: () => false,
+    } as unknown as import('../../src/services/validation-service').ValidationService;
+    const logger = { info: sinon.stub(), warn: sinon.stub() } as unknown as import('../../src/services/logger').Logger;
+
+    const handler = new MarkdownFileHandler(
+      previewService,
+      stateService,
+      configService,
+      validationService,
+      createMemento(),
+      logger
+    );
+
+    const closeStub = sinon.stub(vscode.window.tabGroups, 'close').resolves(true);
+
+    const uri = vscode.Uri.file('/tmp/dirty.md');
+    Object.defineProperty(vscode.window.tabGroups, 'all', {
+      value: [
+        {
+          tabs: [
+            { input: new vscode.TabInputText(uri) },
+            { input: new vscode.TabInputCustom(uri, 'vscode.markdown.preview.editor') },
+          ],
+        },
+      ] as unknown as typeof vscode.window.tabGroups.all,
+      configurable: true,
+    });
+
+    const document = { uri, isUntitled: false, isDirty: true } as vscode.TextDocument;
+    await (handler as unknown as { processDocumentOpen: (d: vscode.TextDocument) => Promise<void> })
+      .processDocumentOpen(document);
+
+    expect(closeStub.called).to.equal(false);
   });
 
   it('skips auto-preview when extension is disabled for a resource', async () => {

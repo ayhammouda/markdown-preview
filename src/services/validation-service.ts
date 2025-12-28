@@ -20,6 +20,7 @@ import * as vscode from 'vscode';
  * Checking the first 8KB is sufficient to detect null bytes that indicate binary files.
  */
 const BINARY_SAMPLE_SIZE = 8 * 1024;
+const BINARY_READ_TIMEOUT_MS = 1000;
 
 /**
  * Service for validating files and documents before processing.
@@ -108,8 +109,19 @@ export class ValidationService {
    * @throws No errors expected.
    */
   async isBinaryFile(uri: vscode.Uri): Promise<boolean> {
+    let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
     try {
-      const data = await vscode.workspace.fs.readFile(uri);
+      const data = await Promise.race([
+        vscode.workspace.fs.readFile(uri),
+        new Promise<Uint8Array>((_resolve, reject) => {
+          timeoutHandle = setTimeout(() => {
+            reject(new Error('Binary file detection timed out.'));
+          }, BINARY_READ_TIMEOUT_MS);
+        }),
+      ]);
+      if (timeoutHandle) {
+        clearTimeout(timeoutHandle);
+      }
       const sample = data.slice(0, BINARY_SAMPLE_SIZE);
 
       for (const byte of sample) {
@@ -118,10 +130,13 @@ export class ValidationService {
         }
       }
 
-      const decoder = new TextDecoder('utf8', { fatal: true });
+      const decoder = new TextDecoder('utf-8', { fatal: true });
       decoder.decode(sample);
       return false;
     } catch {
+      if (timeoutHandle) {
+        clearTimeout(timeoutHandle);
+      }
       return false;
     }
   }

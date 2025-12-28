@@ -1,7 +1,13 @@
-import { expect } from 'chai';
 import sinon from 'sinon';
 import * as vscode from 'vscode';
 import { ValidationService } from '../../src/services/validation-service';
+let expect: Chai.ExpectStatic;
+
+before(async () => {
+  ({ expect } = await import('chai'));
+});
+
+
 
 const createDocument = (text: string, options?: { scheme?: string; languageId?: string }) => {
   const lines = text.split('\n');
@@ -112,6 +118,19 @@ describe('ValidationService', () => {
     sinon.stub(vscode.workspace.fs, 'readFile').resolves(new Uint8Array([0xC3, 0x28]));
 
     const result = await service.isBinaryFile(vscode.Uri.file('/tmp/invalid.md'));
+    expect(result).to.equal(false);
+  });
+
+  it('returns false when binary detection times out', async () => {
+    const service = new ValidationService();
+    const clock = sinon.useFakeTimers();
+    sinon.stub(vscode.workspace.fs, 'readFile').returns(new Promise<Uint8Array>(() => {}));
+
+    const resultPromise = service.isBinaryFile(vscode.Uri.file('/tmp/slow.md'));
+    await clock.tickAsync(2000);
+    const result = await resultPromise;
+
+    clock.restore();
     expect(result).to.equal(false);
   });
 });

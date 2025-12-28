@@ -1,7 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { expect } from 'chai';
 import * as vscode from 'vscode';
+let expect: Chai.ExpectStatic;
+
+before(async () => {
+  ({ expect } = await import('chai'));
+});
+
+
 
 type PackageJsonKeybinding = {
   command: string;
@@ -46,7 +52,7 @@ describe('Command registration', () => {
     expect(toggleEdit, 'missing toggleEditMode keybinding').to.not.equal(undefined);
     expect(toggleEdit?.key).to.equal('ctrl+shift+v');
     expect(toggleEdit?.mac).to.equal('cmd+shift+v');
-    expect(toggleEdit?.when).to.include('resourceLangId == markdown');
+    expect(toggleEdit?.when).to.include('markdownReader.isMarkdown');
 
     const boldBinding = keybindings.find(
       (binding) => binding.command === 'markdownReader.formatBold'

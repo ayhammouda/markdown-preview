@@ -65,9 +65,12 @@ const workspace = {
   getConfiguration: () => ({
     get: () => undefined,
     inspect: () => undefined,
+    update: async () => undefined,
   }),
   asRelativePath: (uri) => uri.fsPath,
   workspaceFolders: [],
+  workspaceFile: undefined,
+  textDocuments: [],
   onDidOpenTextDocument: () => ({ dispose: () => {} }),
   onDidCloseTextDocument: () => ({ dispose: () => {} }),
   onDidDeleteFiles: () => ({ dispose: () => {} }),
@@ -92,7 +95,15 @@ const window = {
   onDidChangeActiveTextEditor: () => ({ dispose: () => {} }),
   tabGroups: {
     onDidChangeTabs: () => ({ dispose: () => {} }),
+    onDidChangeTabGroups: () => ({ dispose: () => {} }),
     all: [],
+    activeTabGroup: {
+      isActive: true,
+      viewColumn: 1,
+      activeTab: undefined,
+      tabs: [],
+    },
+    close: async () => true,
   },
 };
 
@@ -122,8 +133,9 @@ class TabInputText {
 }
 
 class TabInputCustom {
-  constructor(uri) {
+  constructor(uri, viewType) {
     this.uri = uri;
+    this.viewType = viewType;
   }
 }
 
@@ -140,12 +152,19 @@ const ViewColumn = {
   Three: 3,
 };
 
+const ConfigurationTarget = {
+  Global: 1,
+  Workspace: 2,
+  WorkspaceFolder: 3,
+};
+
 module.exports = {
   Uri,
   Position,
   Range,
   Selection,
   ViewColumn,
+  ConfigurationTarget,
   window,
   workspace,
   commands,
